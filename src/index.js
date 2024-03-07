@@ -1,6 +1,7 @@
 import Ancient_Forest from "/src/Ancient_Forest.js"; 
-import niveau1 from "/src/niveau1.js"; 
-import niveau2 from "/src/niveau2.js";
+import niveau1 from "/src/niveau1.js";
+import Rocky_Mountain from "/src/Rocky_Mountain.js"; 
+
 
 
 // configuration générale du jeu
@@ -16,9 +17,9 @@ var config = {
       debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
-  scene: [Ancient_Forest, niveau1,niveau2] 
+  scene: [Ancient_Forest, niveau1,Rocky_Mountain] 
   };
 
 // création et lancement du jeu à partir de la configuration config
 var game = new Phaser.Game(config);
-game.scene.start("Ancient_Forest"); // lancement de la scene selection
+game.scene.start("Ancient_Forest"); // lancement de la scene de début de jeux
