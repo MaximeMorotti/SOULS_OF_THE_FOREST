@@ -761,7 +761,7 @@ var monTimer = this.time.addEvent({
     }}, this);
 
     if (Phaser.Input.Keyboard.JustDown(clavier.space) == true ) {
-      if (this.physics.overlap(player, this.porte)) this.scene.start("Rocky_Mountain");
+      if (this.physics.overlap(player, this.porte)) this.scene.start("Swamp");
     } 
   }
 }

@@ -96,7 +96,7 @@ export default class Start extends Phaser.Scene {
 
     bouton_option.on("pointerup", () => {
       bruit.play();
-      window.open('src/assets/Regles.pdf', '_blank'); 
+      window.open('assets/Regles.pdf', '_blank'); 
     });
     
    }
