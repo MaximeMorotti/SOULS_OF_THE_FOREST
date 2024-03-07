@@ -19,6 +19,7 @@ var groupeBullets_P;
 var boutonFeu_0; 
 var boutonFeu_1; 
 var boutonFeu_2; 
+var porte_ouvert = false;
 // mise en place d'une variable groupeBullets
 
 
@@ -42,7 +43,7 @@ export default class Ancient_Forest extends Phaser.Scene {
     // Charger les images des jeux de tuiles
     this.load.image("Decorative", "assets/Forest/Decorative.png");
     this.load.image("Ancient_Forest", "assets/Forest/MainLev.png");
-    this.load.tilemapTiledJSON("carte", "assets/Forest/ANCIENT_FOREST.json");
+    this.load.tilemapTiledJSON("carte_F", "assets/Forest/ANCIENT_FOREST.json");
     //Charger les mob
     this.load.spritesheet("img_Chimere", "assets/Forest/mobs/chimera-default_3.png", {
       frameWidth: 128,
@@ -90,7 +91,7 @@ export default class Ancient_Forest extends Phaser.Scene {
       frameHeight: 19
     }); 
 
-    this.load.image("img_porte", 'src/assets/porte.png');
+    this.load.image("img_porte", 'assets/puerta (002).png');
   }
   
     
@@ -99,8 +100,11 @@ export default class Ancient_Forest extends Phaser.Scene {
 /***********************************************************************/
 
   create() {
+    groupeBullets = this.physics.add.group();
+    groupeBullets_P = this.physics.add.group();
+
     // Initialisation de la carte
-    carteDuNiveau = this.make.tilemap({ key: "carte" });
+    carteDuNiveau = this.make.tilemap({ key: "carte_F" });
   
     // Initialisation des jeux de tuiles
     tilesetDecorativeProps = carteDuNiveau.addTilesetImage("Decorative");
@@ -131,6 +135,7 @@ export default class Ancient_Forest extends Phaser.Scene {
     player.setSize(12,30);
     player.setOffset(18,7);
     player.PV =1;
+    this.physics.add.overlap(groupeBullets, player, hit, null,this);
     // Ajouter le joueur à la collision avec chaque calque
     this.physics.add.collider(player, Bords);
     this.physics.add.collider(player, Volumes2);
@@ -284,7 +289,7 @@ export default class Ancient_Forest extends Phaser.Scene {
       repeat: -1
     });
     this.anims.create({
-      key: "Chimere_attaque1",
+      key: "Tornades",
       frames: this.anims.generateFrameNumbers("Tornades", { start: 0, end: 7 }),
       frameRate: 10,
       repeat: -1
@@ -302,7 +307,7 @@ export default class Ancient_Forest extends Phaser.Scene {
       repeat: 0
     });
     this.anims.create({
-      key: "Chimere_attaque2",
+      key: "nuage_poison_vert",
       frames: this.anims.generateFrameNumbers("nuage_poison_vert", { start: 0, end: 5 }),
       frameRate: 10,
       repeat: -1
@@ -311,7 +316,7 @@ export default class Ancient_Forest extends Phaser.Scene {
       key: "Plante_attaque",
       frames: this.anims.generateFrameNumbers("img_Plante", { start: 0, end: 5 }),
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
     this.anims.create({
       key: "Chimere_stand",
@@ -319,9 +324,14 @@ export default class Ancient_Forest extends Phaser.Scene {
       frameRate: 10,
       repeat: -1
     });
+    this.anims.create({
+      key: "bullet_plante",
+      frames: this.anims.generateFrameNumbers("boule_gaz_plante", { start: 0, end: 8 }),
+      frameRate: 10,
+      repeat: -1
+    });
     // création d'un groupe d'éléments vide
-    groupeBullets = this.physics.add.group();
-    groupeBullets_P = this.physics.add.group();
+    
     this.physics.world.on("worldbounds", function(body) {
       // on récupère l'objet surveillé
       var objet = body.gameObject;
@@ -346,6 +356,9 @@ export default class Ancient_Forest extends Phaser.Scene {
   groupe_Orc = this.physics.add.group();
   groupe_Plante = this.physics.add.group();
   groupe_Chimere = this.physics.add.group();
+
+  this.physics.add.collider(groupe_Loup, player);
+  this.physics.add.collider(groupe_Orc, player);
 
   tab_points.objects.forEach(point => {
     if (point.name == "Loup") {
@@ -373,23 +386,18 @@ export default class Ancient_Forest extends Phaser.Scene {
       nouvelleChimere.patiente = false ;
     }
   });
-
-  if (groupe_Chimere.getChildren().some(chimere => chimere.Pv <= 0)) {
-    this.porte1 = this.physics.add.staticSprite(player.x, player.y, "img_porte");
-  }
+  
+  this.porte = this.physics.add.staticSprite(150, 200, "img_porte");
+  this.porte.setSize(50,90);
+  this.porte.setOffset(75,50);
+  
   //this.physics.add.collider(player, groupe_Loup);
   //this.physics.add.collider(player, groupe_Orc);
   //this.physics.add.collider(player, groupe_Plante);
   //this.physics.add.collider(player, groupe_Chimere);
   this.physics.add.collider(groupe_Orc, groupe_Loup);
-  this.physics.add.collider(groupe_Orc, groupe_Plante);
-  this.physics.add.collider(groupe_Orc, groupe_Chimere);
-  this.physics.add.collider(groupe_Loup, groupe_Plante);
-  this.physics.add.collider(groupe_Loup, groupe_Chimere);
-  this.physics.add.collider(groupe_Chimere, groupe_Plante);
   this.physics.add.collider(groupe_Orc, groupe_Orc);
   this.physics.add.collider(groupe_Loup, groupe_Loup);
-  this.physics.add.collider(groupe_Plante, groupe_Plante);
   this.physics.add.collider(groupe_Orc, Bords);
   this.physics.add.collider(groupe_Orc, Volumes2);
   this.physics.add.collider(groupe_Orc, Volumes);
@@ -416,44 +424,20 @@ export default class Ancient_Forest extends Phaser.Scene {
   this.physics.add.overlap(groupeBullets_P, groupe_Plante, hit, null,this);
   this.physics.add.overlap(groupeBullets_P, groupe_Chimere, hit, null,this);
 
+  this.physics.add.overlap(groupe_Loup, player, hit_L, null,this);
+  this.physics.add.overlap(groupe_Orc, player, hit_O, null,this);
+
   var coefDirX;
   var coefDirY;
 
 
   var monTimer = this.time.addEvent({
-    delay: 500, // ms
-    callback: function () {
-      groupe_Plante.children.iterate(function iterateur(une_Plante) {
-        if ( Math.abs(player.x - une_Plante.x) < 100 && Math.abs(player.y - une_Plante.y) < 100) {
-          une_Plante.anims.play("Plante_attaque", true);
-          coefDirX=player.x-une_Plante.x
-          coefDirY=player.y-une_Plante.y
-          // on crée la balle a coté du joueur
-          var bullet = groupeBullets.create(une_Plante.x+1, une_Plante.y+1, "boule_gaz_plante");
-          // parametres physiques de la balle.
-          bullet.setCollideWorldBounds(true);
-          bullet.body.allowGravity =false;
-          bullet.setVelocity(1* coefDirX, 1* coefDirY); // vitesse en x et en y
-          bullet.body.onWorldBounds = true; 
-          if(Math.abs(bullet.x - une_Plante.x) < 0.01 && Math.abs(bullet.y - une_Plante.y) <0.01){
-            bullet.destroy();
-          };
-        } 
-            
-      });
-    },
-    args: [],
-    callbackScope: this,
-    repeat: -1
-  });
-
-  var monTimer = this.time.addEvent({
-    delay: 3000, // ms
+    delay: 2300, // ms
     callback: function () {
       timer = false;
       
       groupe_Chimere.children.iterate(function (une_Chimere) {
-      if ( Math.abs(player.x - une_Chimere.x) < 200 && Math.abs(player.y - une_Chimere.y) < 200) {
+      if ( Math.abs(player.x - une_Chimere.x) < 600 && Math.abs(player.y - une_Chimere.y) < 600) {
       une_Chimere.anims.play('Chimere_stand', false);
       une_Chimere.anims.play('Chimere_pattern1', true);
       tirer_Chimere(player, une_Chimere)
@@ -468,7 +452,7 @@ export default class Ancient_Forest extends Phaser.Scene {
         repeat: 0
       });
       var massue = this.time.addEvent({
-        delay: 10000, // ms
+        delay: 400, // ms
         callback: function () {
           timer = false;
           groupe_Chimere.children.iterate(function (une_Chimere) {
@@ -478,7 +462,7 @@ export default class Ancient_Forest extends Phaser.Scene {
           tirer_P(une_Chimere)   
           }})
           var st2 = this.time.addEvent({
-            delay: 400, // ms
+            delay: 900, // ms
             callback: function () {
               timer = true;
             },
@@ -496,12 +480,44 @@ export default class Ancient_Forest extends Phaser.Scene {
     callbackScope: this,
     repeat: -1
    
-})};
+})
 
 
-
-
-
+      
+var monTimer = this.time.addEvent({
+  delay: 1000, // ms
+  callback: function () {
+    groupe_Plante.children.iterate(function iterateur(une_Plante) {
+      if ( Math.abs(player.x - une_Plante.x) < 300 && Math.abs(player.y - une_Plante.y) < 300) {
+        une_Plante.anims.play("Plante_stand", false);
+        setTimeout(function () {
+          une_Plante.anims.play("Plante_attaque", true);
+        },100)
+        coefDirX=player.x-une_Plante.x
+        coefDirY=player.y-une_Plante.y
+        // on crée la balle a coté du joueur
+        var bullet = groupeBullets.create(une_Plante.x+1, une_Plante.y+1, 'boule_gaz_plante');
+        bullet.anims.play('bullet_plante',true)
+        // parametres physiques de la balle.
+        bullet.positionInitialeX = bullet.x;
+        bullet.positionInitialeY = bullet.y;
+        bullet.setCollideWorldBounds(true);
+        bullet.body.allowGravity =false;
+        bullet.setVelocity(1* coefDirX, 1* coefDirY); // vitesse en x et en y
+        bullet.body.onWorldBounds = true; 
+        if(Math.abs(bullet.x - une_Plante.x) < 0.01 && Math.abs(bullet.y - une_Plante.y) <0.01){
+          bullet.destroy();
+        };
+      } else {
+        une_Plante.anims.play("Plante_attaque", false);
+        une_Plante.anims.play("Plante_stand", true);
+      }
+    });
+  },
+  args: [],
+  callbackScope: this,
+  repeat: -1
+});};
 
 
 /***********************************************************************/
@@ -509,6 +525,16 @@ export default class Ancient_Forest extends Phaser.Scene {
 /***********************************************************************/
  
   update()  { 
+
+    groupe_Chimere.children.iterate(function (une_chimere) {
+      // Vérifie si les points de vie de la chimère sont inférieurs ou égaux à zéro
+      if (une_chimere.PV <= 0) {
+          porte_ouvert = true;
+      }
+    });
+
+
+
     if ( Phaser.Input.Keyboard.JustDown(boutonFeu_0)) {
       tirer(player);
       //son_feu.play();
@@ -623,10 +649,26 @@ export default class Ancient_Forest extends Phaser.Scene {
       }
     });
 
+    groupeBullets.children.iterate(function (bullet) {
+      // Vérifie si la balle a dépassé la limite par rapport à sa position initiale et à son type
+      if (bullet.texture.key === "Tornades" && (bullet.x >= bullet.positionInitialeX + 500 || bullet.x <= bullet.positionInitialeX - 500 || bullet.y >= bullet.positionInitialeY + 500 || bullet.y <= bullet.positionInitialeY - 500)) {
+        ballesADetruire.push(bullet); // Ajoute la balle au tableau des balles à détruire
+      } else if ((bullet.texture.key === "boule_gaz_plante") && (bullet.x >= bullet.positionInitialeX + 250 || bullet.x <= bullet.positionInitialeX - 250 || bullet.y >= bullet.positionInitialeY + 250 || bullet.y <= bullet.positionInitialeY - 250)) {
+        ballesADetruire.push(bullet); // Ajoute la balle au tableau des balles à détruire});
+      } else if ((bullet.texture.key === "nuage_poison_vert") && (bullet.x >= bullet.positionInitialeX + 250 || bullet.x <= bullet.positionInitialeX - 250 || bullet.y >= bullet.positionInitialeY + 250 || bullet.y <= bullet.positionInitialeY - 250)) {
+        ballesADetruire.push(bullet); // Ajoute la balle au tableau des balles à détruire});
+      }});
+
     // Détruit les balles après avoir terminé l'itération
     ballesADetruire.forEach(function (balle) {
       balle.destroy();
     });
+
+    groupe_Chimere.children.iterate(function iterateur(une_Chimere) {
+      if (timer == true){
+        une_Chimere.anims.play('Chimere_stand', true);
+      }}, this);
+
     groupe_Loup.children.iterate(function iterateur(un_Loup) {
       if (Math.abs(Math.sqrt((player.x - un_Loup.x) * (player.x - un_Loup.x)) + Math.sqrt((player.y - un_Loup.y) * (player.y - un_Loup.y)) < 200)) {
   
@@ -709,8 +751,8 @@ export default class Ancient_Forest extends Phaser.Scene {
       }
     }}, this);
 
-    if (Phaser.Input.Keyboard.JustDown(clavier.space) == true) {
-      if (this.physics.overlap(player, this.porte)) this.scene.start("niveau1");
+    if (Phaser.Input.Keyboard.JustDown(clavier.space) == true && porte_ouvert == true) {
+      if (this.physics.overlap(player, this.porte)) this.scene.start("Rocky_Mountain");
     } 
   }
 }
@@ -909,22 +951,8 @@ function tirer_2(player) {
 }   
 
 function tirer_Plante(player,une_Plante) {
-  // mesasge d'alerte affichant les attributs de player
-      var coefDirX;
-      var coefDirY;
-      une_Plante.anims.play("Plante_attaque", true);
-  coefDirX=player.x-une_Plante.x
-  coefDirY=player.y-une_Plante.y
-      // on crée la balle a coté du joueur
-      var bullet = groupeBullets.create(une_Plante.x+1, une_Plante.y+1, "boule_gaz_plante");
-      // parametres physiques de la balle.
-      bullet.setCollideWorldBounds(true);
-      bullet.body.allowGravity =false;
-      bullet.setVelocity(1* coefDirX, 1* coefDirY); // vitesse en x et en y
-      bullet.body.onWorldBounds = true; 
-      if(Math.abs(bullet.x - une_Plante.x) < 0.01 && Math.abs(bullet.y - une_Plante.y) <0.01){
-bullet.destroy();
-      }
+  
+  
       
 }  
   
@@ -934,9 +962,9 @@ function tirer_Chimere(player, une_Chimere) {
 if (player.x < une_Chimere.x) { coefDirX = -1; } else { coefDirX = 1 }
 if (player.y < une_Chimere.y) { coefDirY = -1; } else { coefDirY = 1 }
   // on crée la balle a coté du joueur
-  var bullet = groupeBullets.create(une_Chimere.x + (25 * coefDirX), une_Chimere.y + (25 * coefDirX), 'nuage_poison_vert');
+  var bullet = groupeBullets.create(une_Chimere.x + (25 * coefDirX), une_Chimere.y + (25 * coefDirX), 'Tornades');
   bullet.setSize(35,35);
-  bullet.setOffset(7,7);
+  bullet.setOffset(20,20);
   // parametres physiques de la balle.
   bullet.positionInitialeX = bullet.x;
   bullet.positionInitialeY = bullet.y;
@@ -944,24 +972,41 @@ if (player.y < une_Chimere.y) { coefDirY = -1; } else { coefDirY = 1 }
   bullet.body.onWorldBounds = true;  
   bullet.body.allowGravity =false;
   bullet.setVelocity(player.x-une_Chimere.x , player.y-une_Chimere.y); // vitesse en x et en y
-  bullet.anims.play('nuage_poison_vert',true)
+  bullet.anims.play('Tornades',true)
 
 } 
 
-function tirer_P(ennemie) {
+function tirer_P(une_Chimere) {
   // Création des balles autour de l'ennemi
-  var bullet8 = groupeBullets.create(ennemie.x + 20, ennemie.y + 20, 'Tornades');
-  var bullet1 = groupeBullets.create(ennemie.x - 20, ennemie.y + 20, 'Tornades');
-  var bullet2 = groupeBullets.create(ennemie.x + 20, ennemie.y - 20, 'Tornades');
-  var bullet3 = groupeBullets.create(ennemie.x - 20, ennemie.y - 20, 'Tornades');
-  var bullet4 = groupeBullets.create(ennemie.x + 25, ennemie.y, 'Tornades');
-  var bullet5 = groupeBullets.create(ennemie.x - 25, ennemie.y, 'Tornades');
-  var bullet6 = groupeBullets.create(ennemie.x, ennemie.y + 25, 'Tornades');
-  var bullet7 = groupeBullets.create(ennemie.x, ennemie.y - 25, 'Tornades');
+  var bullet8 = groupeBullets.create(une_Chimere.x + 20, une_Chimere.y + 20, "nuage_poison_vert");
+  var bullet1 = groupeBullets.create(une_Chimere.x - 20, une_Chimere.y + 20, "nuage_poison_vert");
+  var bullet2 = groupeBullets.create(une_Chimere.x + 20, une_Chimere.y - 20, "nuage_poison_vert");
+  var bullet3 = groupeBullets.create(une_Chimere.x - 20, une_Chimere.y - 20, "nuage_poison_vert");
+  var bullet4 = groupeBullets.create(une_Chimere.x + 25, une_Chimere.y, "nuage_poison_vert");
+  var bullet5 = groupeBullets.create(une_Chimere.x - 25, une_Chimere.y, "nuage_poison_vert");
+  var bullet6 = groupeBullets.create(une_Chimere.x, une_Chimere.y + 25, "nuage_poison_vert");
+  var bullet7 = groupeBullets.create(une_Chimere.x, une_Chimere.y - 25, "nuage_poison_vert");
+  // definition de la position des bullets
+  bullet1.positionInitialeX = bullet1.x;
+  bullet1.positionInitialeY = bullet1.y;
+  bullet2.positionInitialeX = bullet2.x;
+  bullet2.positionInitialeY = bullet2.y;
+  bullet3.positionInitialeX = bullet3.x;
+  bullet3.positionInitialeY = bullet3.y;
+  bullet4.positionInitialeX = bullet4.x;
+  bullet4.positionInitialeY = bullet4.y;
+  bullet5.positionInitialeX = bullet5.x;
+  bullet5.positionInitialeY = bullet5.y;
+  bullet6.positionInitialeX = bullet6.x;
+  bullet6.positionInitialeY = bullet6.y;
+  bullet7.positionInitialeX = bullet7.x;
+  bullet7.positionInitialeY = bullet7.y;
+  bullet8.positionInitialeX = bullet8.x;
+  bullet8.positionInitialeY = bullet8.y;
   // Réglage des tailles et des offsets des balles
   groupeBullets.getChildren().forEach((bullet) => {
     bullet.setSize(35, 35);
-    bullet.setOffset(7, 7);
+    bullet.setOffset(20, 20);
   });
   // Application des propriétés physiques pour chaque balle
   groupeBullets.getChildren().forEach((bullet) => {
@@ -978,14 +1023,14 @@ function tirer_P(ennemie) {
   bullet5.setVelocity(-25, 0);
   bullet6.setVelocity(0, 25);
   bullet7.setVelocity(0, -25);
-  bullet1.anims.play('Tornades',true)
-  bullet2.anims.play('Tornades',true)
-  bullet3.anims.play('Tornades',true)
-  bullet4.anims.play('Tornades',true)
-  bullet5.anims.play('Tornades',true)
-  bullet6.anims.play('Tornades',true)
-  bullet7.anims.play('Tornades',true)
-  bullet8.anims.play('Tornades',true)
+  bullet1.anims.play('nuage_poison_vert',true)
+  bullet2.anims.play('nuage_poison_vert',true)
+  bullet3.anims.play('nuage_poison_vert',true)
+  bullet4.anims.play('nuage_poison_vert',true)
+  bullet5.anims.play('nuage_poison_vert',true)
+  bullet6.anims.play('nuage_poison_vert',true)
+  bullet7.anims.play('nuage_poison_vert',true)
+  bullet8.anims.play('nuage_poison_vert',true)
 }
 
 /***********************************************************************/
@@ -1186,7 +1231,53 @@ function hit (bullet, cible) {
     bullet.destroy();
   }  
   if (groupeBullets.contains(bullet)){
-    player.destroy
+    console.log(" manger");
+    player.destroy();
     bullet.destroy();
+  }  
+  if (groupeBullets.contains(bullet1)){
+    player.destroy();
+    bullet1.destroy();
+  }  
+  if (groupeBullets.contains(bullet2)){
+    player.destroy();
+    bullet2.destroy();
+  }  
+  if (groupeBullets.contains(bullet3)){
+    player.destroy();
+    bullet3.destroy();
+  }  
+  if (groupeBullets.contains(bullet4)){
+    player.destroy();
+    bullet4.destroy();
+  }  
+  if (groupeBullets.contains(bullet5)){
+    player.destroy();
+    bullet5.destroy();
+  }  
+  if (groupeBullets.contains(bullet6)){
+    player.destroy();
+    bullet6.destroy();
+  }  
+  if (groupeBullets.contains(bullet7)){
+    player.destroy();
+    bullet7.destroy();
+  }  
+  if (groupeBullets.contains(bullet8)){
+    player.destroy();
+    bullet8q.destroy();
+  }  
+
+}
+function hit_O (player,nouveauLoup) {
+  if (groupe_Loup.contains(nouveauLoup)){
+    player.destroy();
+    nouveauLoup.destroy();
+  }  
+}
+function hit_L (player,nouvelOrc) {
+  if (groupe_Orc.contains(nouvelOrc)){
+    player.destroy();
+    nouvelOrc.destroy();
   }  
 }

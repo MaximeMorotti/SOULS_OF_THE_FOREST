@@ -3,6 +3,9 @@ var groupe_creeper;
 var groupe_ombre;
 var groupe_fantome;
 var groupe_Ogre;
+var groupeBullets;
+var groupeBullets_P;
+var timer = true;
 
 export default class Rocky_Mountain extends Phaser.Scene { 
     // constructeur de la classe
@@ -15,7 +18,7 @@ export default class Rocky_Mountain extends Phaser.Scene {
       // Charger les images des jeux de tuiles
       this.load.image("Decorative_props", "assets/Mountain/Decorative_props.png");
       this.load.image("Mainlev_build", "assets/Mountain/Mainlev_build.png");
-      this.load.tilemapTiledJSON("carte", "assets/Mountain/moutain_map.json"); 
+      this.load.tilemapTiledJSON("carte_M", "assets/Mountain/moutain_map.json"); 
     
 
       this.load.spritesheet("creeper", "assets/Mountain/mobs/creeper.png", {
@@ -38,6 +41,8 @@ export default class Rocky_Mountain extends Phaser.Scene {
     }
   
     create() {
+      groupeBullets = this.physics.add.group();
+      groupeBullets_P = this.physics.add.group();
       
       this.clavier = this.input.keyboard.createCursorKeys();
       this.boutonFeu_0 = this.input.keyboard.addKey('A');  
@@ -45,7 +50,7 @@ export default class Rocky_Mountain extends Phaser.Scene {
       this.boutonFeu_2 = this.input.keyboard.addKey('R'); 
 
       // Initialisation de la carte
-      carteDuNiveau = this.make.tilemap({ key: "carte" });
+      carteDuNiveau = this.make.tilemap({ key: "carte_M" });
 
       // Initialisation des jeux de tuiles
       tilesetDecorativeProps = carteDuNiveau.addTilesetImage("Decorative_props");
@@ -119,6 +124,15 @@ export default class Rocky_Mountain extends Phaser.Scene {
       groupe_fantome = this.physics.add.group();
       groupe_Ogre = this.physics.add.group();
 
+      this.physics.add.overlap(groupeBullets_P, groupe_creeper, hit, null,this);
+      this.physics.add.overlap(groupeBullets_P, groupe_ombre, hit, null,this);
+      this.physics.add.overlap(groupeBullets_P, groupe_fantome, hit, null,this);
+      this.physics.add.overlap(groupeBullets_P, groupe_Ogre, hit, null,this);
+
+      
+      this.physics.add.overlap(groupe_creeper, this.player, hit_C, null,this);
+      this.physics.add.overlap(groupe_fantome, this.player, hit_F, null,this);
+
       this.physics.add.collider(groupe_creeper, Background); 
       this.physics.add.collider(groupe_creeper, chemins); 
       this.physics.add.collider(groupe_creeper, Montagnes2); 
@@ -167,7 +181,7 @@ export default class Rocky_Mountain extends Phaser.Scene {
       }
       });
 
-      groupeBullets = this.physics.add.group();
+      
       
       var monTimer2 = this.time.addEvent({
         delay: 7000, // ms
@@ -181,102 +195,85 @@ export default class Rocky_Mountain extends Phaser.Scene {
         repeat: -1
       }); 
 
-      this.anims.create({
-        key: "anim_tourne_L", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 15, end: 17 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 10, // vitesse de défilement des frames
-        repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-      }); 
-      this.anims.create({
-        key: "anim_tourne_R", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 9, end: 11 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 10, // vitesse de défilement des frames
-        repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-      }); 
-      this.anims.create({
-        key: "anim_tourne_up", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 3, end: 5 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 10, // vitesse de défilement des frames
-        repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-      }); 
-      this.anims.create({
-        key: "anim_tourne_up_R", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 6, end: 8 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 10, // vitesse de défilement des frames
-        repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-      }); 
-      this.anims.create({
-        key: "anim_tourne_up_L", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 0, end: 2 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 10, // vitesse de défilement des frames
-        repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-      }); 
-      this.anims.create({
-        key: "anim_tourne_dw", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 21, end: 23 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 10, // vitesse de défilement des frames
-        repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-      }); 
-      this.anims.create({
-        key: "anim_tourne_dw_R", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 24, end: 26 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 10, // vitesse de défilement des frames
-        repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-      });
-      this.anims.create({
-        key: "anim_tourne_dw_L", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 18, end: 20 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 10, // vitesse de défilement des frames
-        repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-      });
-      this.anims.create({
-        key: "anime_stand_by", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 22, end: 22 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 10, // vitesse de défilement des frames
-        repeat: -1 // nombre de répétitions de l'animation. -1 = infini
-      }); 
-      this.anims.create({
-        key: "anime_flame", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("bullet", { start: 0, end: 41 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 20, // vitesse de défilement des frames
-        repeat: 0 // nombre de répétitions de l'animation. -1 = infini
-      });
-      this.anims.create({
-        key: "anime_purple", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("bullet_1", { start: 16, end: 48 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 20, // vitesse de défilement des frames
-        repeat: 0 // nombre de répétitions de l'animation. -1 = infini
-      });
-      this.anims.create({
-        key: "anime_bleu", // key est le nom de l'animation : doit etre unique pour la scene.
-        frames: this.anims.generateFrameNumbers("bullet_2", { start: 0, end: 15 }), // on prend toutes les frames de img perso numerotées de 0 à 3
-        frameRate: 20, // vitesse de défilement des frames
-        repeat: 0 // nombre de répétitions de l'animation. -1 = infini
-      });
+      
 
       this.anims.create({
         key: "anim_Ogre",
-        frames: this.anims.generateFrameNumbers("The_Ogre", { start: 21, end: 23 }),
+        frames: this.anims.generateFrameNumbers("Ogre", { start: 21, end: 23 }),
         frameRate: 10,
         repeat: 0
       });
       this.anims.create({
         key: "anim_Ogre_stby",
-        frames: this.anims.generateFrameNumbers("The_Ogre", { start: 0, end: 2 }),
+        frames: this.anims.generateFrameNumbers("Ogre", { start: 0, end: 2 }),
         frameRate: 4,
         repeat: -1
       });
       this.anims.create({
         key: "anim_Ogre_P",
-        frames: this.anims.generateFrameNumbers("The_Ogre", { start: 24, end: 26 }),
+        frames: this.anims.generateFrameNumbers("Ogre", { start: 24, end: 26 }),
         frameRate: 10,
         repeat: 0
       });
+
+      var monTimer = this.time.addEvent({
+        delay: 4000, // ms
+        callback: function () {
+            timer = false;
+            groupe_Ogre.children.iterate(function(Ogre) {
+                Ogre.anims.play('anim_Ogre_stby', false);
+                Ogre.anims.play('anim_Ogre_P', true);
+                tirer_P(this.player, Ogre);
+            });
+            var st1 = this.time.addEvent({
+                delay: 400, // ms
+                callback: function () {
+                    timer = true;
+                },
+                args: [],
+                callbackScope: this,
+                repeat: 0
+            });
+            var massue = this.time.addEvent({
+                delay: 2000, // ms
+                callback: function () {
+                    timer = false;
+                    groupe_Ogre.children.iterate(function(Ogre) {
+                        Ogre.anims.play('anim_Ogre_stby', false);
+                        Ogre.anims.play('anim_Ogre', true);
+                        tirer_O(this.player, Ogre);
+                    });
+                    var st2 = this.time.addEvent({
+                        delay: 400, // ms
+                        callback: function () {
+                            timer = true;
+                        },
+                        args: [],
+                        callbackScope: this,
+                        repeat: 0
+                    });
+                },
+                args: [],
+                callbackScope: this,
+                repeat: 0
+            });
+        },
+        args: [],
+        callbackScope: this,
+        repeat: -1
+    });
 
         
     }
   
     update() {
+
+      if (timer == true){
+        groupe_Ogre.children.iterate(function(Ogre) {
+          Ogre.anims.play('anim_Ogre_stby', true);
+      });
+      }
+
       if ( Phaser.Input.Keyboard.JustDown(this.boutonFeu_0)) {
         tirer(this.player);
         //son_feu.play();
@@ -289,6 +286,24 @@ export default class Rocky_Mountain extends Phaser.Scene {
         tirer_2(this.player);
         //son_feu.play();
       }  
+      var ballesADetruire = []; // Tableau temporaire pour stocker les balles à détruire
+
+      groupeBullets_P.children.iterate(function (bullet) {
+        // Vérifie si la balle a dépassé la limite par rapport à sa position initiale et à son type
+        if (bullet.texture.key === "bullet" && (bullet.x >= bullet.positionInitialeX + 350 || bullet.x <= bullet.positionInitialeX - 350 || bullet.y >= bullet.positionInitialeY + 350 || bullet.y <= bullet.positionInitialeY - 350)) {
+          ballesADetruire.push(bullet); // Ajoute la balle au tableau des balles à détruire
+        } else if (bullet.texture.key === "bullet_1" && (bullet.x >= bullet.positionInitialeX + 200 || bullet.x <= bullet.positionInitialeX - 200)) {
+          ballesADetruire.push(bullet); // Ajoute la balle au tableau des balles à détruire
+        } else if (bullet.texture.key === "bullet_2" && (bullet.x >= bullet.positionInitialeX + 100 || bullet.x <= bullet.positionInitialeX - 100)) {
+          ballesADetruire.push(bullet); // Ajoute la balle au tableau des balles à détruire
+        }
+      });
+  
+      // Détruit les balles après avoir terminé l'itération
+      ballesADetruire.forEach(function (balle) {
+        balle.destroy();
+      });
+
       if (this.clavier.right.isDown){
         this.player.setVelocityX(160);
         this.player.direction_H = '';
@@ -448,7 +463,51 @@ export default class Rocky_Mountain extends Phaser.Scene {
         }
     }, this);
     }
-
+  }
+  function hit (bullet, cible) {
+    if (groupeBullets_P.contains(bullet)){
+      if(bullet.texture.key == "bullet"){
+        cible.PV--;
+      }
+      if(bullet.texture.key == "bullet_1"){
+        cible.PV = cible.PV -3;
+      }
+      if(bullet.texture.key == "bullet_2"){
+        cible.PV = cible.PV -5;
+      }
+      if (cible.PV<=0) {
+        cible.destroy();
+      } 
+      bullet.destroy();
+    }  
+    if (groupeBullets.contains(bullet1)){
+      player.destroy
+      bullet.destroy();
+    }  
+    if (groupeBullets.contains(bullet2)){
+      player.destroy
+      bullet.destroy();
+    } 
+    if (groupeBullets.contains(bullet3)){
+      player.destroy
+      bullet.destroy();
+    } 
+    if (groupeBullets.contains(bullet4)){
+      player.destroy
+      bullet.destroy();
+    } 
+  }
+  function hit_C (player, nouveau_creeper) {
+    if (groupe_creeper.contains(nouveau_creeper)){
+      player.destroy();
+      nouveau_creeper.destroy();
+    } 
+  }
+  function hit_F (player, nouvel_fantome) {
+    if (groupe_fantome.contains(nouvel_fantome)){
+      player.destroy();
+      nouvel_fantome.destroy();
+    } 
   }
 
   function tirer_ombre(ombre){
@@ -481,6 +540,248 @@ export default class Rocky_Mountain extends Phaser.Scene {
         bullet4.body.allowGravity =false;
         bullet4.setVelocity(0, 60* coefDirX); // vitesse en x et en y
         bullet4.body.onWorldBounds = true;
-      }
+  }
+  function tirer(player) {
+    var coefDir_L;
+    var coefDir_H;
+    if (player.direction_L == 'left') { 
+        coefDir_L = -1; 
+        // on crée la balle a coté du joueur
+        var bullet = groupeBullets_P.create(player.x + (25 * coefDir_L), player.y - 4, 'bullet');
+        bullet.setSize(10,10);
+        bullet.setOffset(3,5);
+        // parametres physiques de la balle.
+        bullet.positionInitialeX = bullet.x;
+        bullet.positionInitialeY = bullet.y;
+        // on acive la détection de l'evenement "collision au bornes"
+        bullet.body.onWorldBounds = true;  
+        bullet.body.allowGravity =false;
+        bullet.setVelocity(200 * coefDir_L, 0); // vitesse en x et en y
+        bullet.anims.play('anime_flame',true);
+    } else if (player.direction_L == 'right') { 
+        coefDir_L = 1 
+        // on crée la balle a coté du joueur
+        var bullet = groupeBullets_P.create(player.x + (25 * coefDir_L), player.y - 4, 'bullet');
+        bullet.setSize(10,10);
+        bullet.setOffset(3,5);
+        // parametres physiques de la balle.
+        bullet.positionInitialeX = bullet.x;
+        bullet.positionInitialeY = bullet.y;
+        // on acive la détection de l'evenement "collision au bornes"
+        bullet.body.onWorldBounds = true;  
+        bullet.body.allowGravity =false;
+        bullet.setVelocity(200 * coefDir_L, 0); // vitesse en x et en y
+        bullet.anims.play('anime_flame',true);
+    }else if (player.direction_H == 'up') { 
+        coefDir_H = -1;
+        // on crée la balle a coté du joueur
+        var bullet = groupeBullets_P.create(player.x + 4, player.y + (25 * coefDir_H), 'bullet');
+        bullet.setSize(10,10);
+        bullet.setOffset(3,5);
+        // parametres physiques de la balle.
+        bullet.positionInitialeX = bullet.x;
+        bullet.positionInitialeY = bullet.y;
+        // on acive la détection de l'evenement "collision au bornes"
+        bullet.body.onWorldBounds = true;  
+        bullet.body.allowGravity =false;
+        bullet.setVelocity(0, 200 * coefDir_H); // vitesse en x et en y 
+        bullet.anims.play('anime_flame',true);
+    } else if(player.direction_H == 'down') { 
+        coefDir_H = 1;
+        // on crée la balle a coté du joueur
+        var bullet = groupeBullets_P.create(player.x - 4 , player.y + (25 * coefDir_H), 'bullet');
+        bullet.setSize(10,10);
+        bullet.setOffset(3,5);
+        // parametres physiques de la balle.
+        bullet.positionInitialeX = bullet.x;
+        bullet.positionInitialeY = bullet.y;
+        // on acive la détection de l'evenement "collision au bornes"
+        bullet.body.onWorldBounds = true;  
+        bullet.body.allowGravity =false;
+        bullet.setVelocity(0, 200 * coefDir_H); // vitesse en x et en y 
+        bullet.anims.play('anime_flame',true); 
+    }
+    
+      
+  }
+    
+  function tirer_1(player) {
+    var coefDir_L;
+    var coefDir_H;
+    if (player.direction_L == 'left') { 
+      coefDir_L = -1; 
+      // on crée la balle a coté du joueur
+      var bullet = groupeBullets_P.create(player.x + (25 * coefDir_L), player.y - 4, 'bullet');
+      bullet.setSize(27.5,27.5);
+      bullet.setOffset(5,3.5);
+      // parametres physiques de la balle.
+      bullet.positionInitialeX = bullet.x;
+      bullet.positionInitialeY = bullet.y;
+      // on acive la détection de l'evenement "collision au bornes"
+      bullet.body.onWorldBounds = true;  
+      bullet.body.allowGravity =false;
+      bullet.setVelocity(200 * coefDir_L, 0); // vitesse en x et en y
+      bullet.anims.play('anime_purple',true);
+  } else if (player.direction_L == 'right') { 
+      coefDir_L = 1 
+      // on crée la balle a coté du joueur
+      var bullet = groupeBullets_P.create(player.x + (25 * coefDir_L), player.y - 4, 'bullet');
+      bullet.setSize(27.5,27.5);
+      bullet.setOffset(5,3.5);
+      // parametres physiques de la balle.
+      bullet.positionInitialeX = bullet.x;
+      bullet.positionInitialeY = bullet.y;
+      // on acive la détection de l'evenement "collision au bornes"
+      bullet.body.onWorldBounds = true;  
+      bullet.body.allowGravity =false;
+      bullet.setVelocity(200 * coefDir_L, 0); // vitesse en x et en y
+      bullet.anims.play('anime_purple',true);
+  }else if (player.direction_H == 'up') { 
+      coefDir_H = -1;
+      // on crée la balle a coté du joueur
+      var bullet = groupeBullets_P.create(player.x + 4, player.y + (25 * coefDir_H), 'bullet');
+      bullet.setSize(27.5,27.5);
+      bullet.setOffset(5,3.5);
+      // parametres physiques de la balle.
+      bullet.positionInitialeX = bullet.x;
+      bullet.positionInitialeY = bullet.y;
+      // on acive la détection de l'evenement "collision au bornes"
+      bullet.body.onWorldBounds = true;  
+      bullet.body.allowGravity =false;
+      bullet.setVelocity(0, 200 * coefDir_H); // vitesse en x et en y 
+      bullet.anims.play('anime_purple',true);
+  } else if(player.direction_H == 'down') { 
+      coefDir_H = 1;
+      // on crée la balle a coté du joueur
+      var bullet = groupeBullets_P.create(player.x - 4 , player.y + (25 * coefDir_H), 'bullet');
+      bullet.setSize(27.5,27.5);
+      bullet.setOffset(5,3.5);
+      // parametres physiques de la balle.
+      bullet.positionInitialeX = bullet.x;
+      bullet.positionInitialeY = bullet.y;
+      // on acive la détection de l'evenement "collision au bornes"
+      bullet.body.onWorldBounds = true;  
+      bullet.body.allowGravity =false;
+      bullet.setVelocity(0, 200 * coefDir_H); // vitesse en x et en y 
+      bullet.anims.play('anime_purple',true);
+  }
+  }
+  
+  function tirer_2(player) {
+    var coefDir_L;
+    var coefDir_H;
+    if (player.direction_L == 'left') { 
+      coefDir_L = -1; 
+      // on crée la balle a coté du joueur
+      var bullet = groupeBullets_P.create(player.x + (25 * coefDir_L), player.y - 4, 'bullet');
+      bullet.setSize(42,42);
+      bullet.setOffset(7.5,15);
+      // parametres physiques de la balle.
+      bullet.positionInitialeX = bullet.x;
+      bullet.positionInitialeY = bullet.y;
+      // on acive la détection de l'evenement "collision au bornes"
+      bullet.body.onWorldBounds = true;  
+      bullet.body.allowGravity =false;
+      bullet.setVelocity(200 * coefDir_L, 0); // vitesse en x et en y
+      bullet.anims.play('anime_bleu',true);
+  } else if (player.direction_L == 'right') { 
+      coefDir_L = 1 
+      // on crée la balle a coté du joueur
+      var bullet = groupeBullets_P.create(player.x + (25 * coefDir_L), player.y - 4, 'bullet');
+      bullet.setSize(42,42);
+      bullet.setOffset(7.5,15);
+      // parametres physiques de la balle.
+      bullet.positionInitialeX = bullet.x;
+      bullet.positionInitialeY = bullet.y;
+      // on acive la détection de l'evenement "collision au bornes"
+      bullet.body.onWorldBounds = true;  
+      bullet.body.allowGravity =false;
+      bullet.setVelocity(200 * coefDir_L, 0); // vitesse en x et en y
+      bullet.anims.play('anime_bleu',true);
+  }else if (player.direction_H == 'up') { 
+      coefDir_H = -1;
+      // on crée la balle a coté du joueur
+      var bullet = groupeBullets_P.create(player.x + 4, player.y + (25 * coefDir_H), 'bullet');
+      bullet.setSize(42,42);
+      bullet.setOffset(7.5,15);
+      // parametres physiques de la balle.
+      bullet.positionInitialeX = bullet.x;
+      bullet.positionInitialeY = bullet.y;
+      // on acive la détection de l'evenement "collision au bornes"
+      bullet.body.onWorldBounds = true;  
+      bullet.body.allowGravity =false;
+      bullet.setVelocity(0, 200 * coefDir_H); // vitesse en x et en y 
+      bullet.anims.play('anime_bleu',true);
+  } else if(player.direction_H == 'down') { 
+      coefDir_H = 1;
+      // on crée la balle a coté du joueur
+      var bullet = groupeBullets_P.create(player.x - 4 , player.y + (25 * coefDir_H), 'bullet');
+      bullet.setSize(42,42);
+      bullet.setOffset(7.5,15);
+      // parametres physiques de la balle.
+      bullet.positionInitialeX = bullet.x;
+      bullet.positionInitialeY = bullet.y;
+      // on acive la détection de l'evenement "collision au bornes"
+      bullet.body.onWorldBounds = true;  
+      bullet.body.allowGravity =false;
+      bullet.setVelocity(0, 200 * coefDir_H); // vitesse en x et en y 
+      bullet.anims.play('anime_bleu',true);
+  }
+  }
+  function tirer_O(player, ennemie) {
+    var coefDirX;
+    var coefDirY;
+  if (player.x < ennemie.x) { coefDirX = -1; } else { coefDirX = 1 }
+  if (player.y < ennemie.y) { coefDirY = -1; } else { coefDirY = 1 }
+    // on crée la balle a coté du joueur
+    var bullet = groupeBullets.create(ennemie.x + (25 * coefDirX), ennemie.y + (25 * coefDirX), 'W_W');
+    bullet.setSize(35,35);
+    bullet.setOffset(7,7);
+  
+    // parametres physiques de la balle.
+    bullet.positionInitialeX = bullet.x;
+    bullet.positionInitialeY = bullet.y;
+    // on acive la détection de l'evenement "collision au bornes"
+    bullet.body.onWorldBounds = true;  
+    bullet.body.allowGravity =false;
+    bullet.setVelocity(player.x-ennemie.x , player.y-ennemie.y); // vitesse en x et en y
+  }  
+  
+  function tirer_P(player, ennemie) {
+    // Création des balles autour de l'ennemi
+    var bullet8 = groupeBullets.create(ennemie.x + 20, ennemie.y + 20, 'W_W');
+    var bullet1 = groupeBullets.create(ennemie.x - 20, ennemie.y + 20, 'W_W');
+    var bullet2 = groupeBullets.create(ennemie.x + 20, ennemie.y - 20, 'W_W');
+    var bullet3 = groupeBullets.create(ennemie.x - 20, ennemie.y - 20, 'W_W');
+    var bullet4 = groupeBullets.create(ennemie.x + 25, ennemie.y, 'W_W');
+    var bullet5 = groupeBullets.create(ennemie.x - 25, ennemie.y, 'W_W');
+    var bullet6 = groupeBullets.create(ennemie.x, ennemie.y + 25, 'W_W');
+    var bullet7 = groupeBullets.create(ennemie.x, ennemie.y - 25, 'W_W');
+  
+    // Réglage des tailles et des offsets des balles
+    groupeBullets.getChildren().forEach((bullet) => {
+      bullet.setSize(35, 35);
+      bullet.setOffset(7, 7);
+    });
+  
+    // Application des propriétés physiques pour chaque balle
+    groupeBullets.getChildren().forEach((bullet) => {
+      bullet.body.onWorldBounds = true; 
+      bullet.body.allowGravity = false;
+    });
+  
+    // Réglage des vélocités des balles
+    bullet8.setVelocity(20, 20);
+    bullet1.setVelocity(-20, 20);
+    bullet2.setVelocity(20, -20);
+    bullet3.setVelocity(-20, -20);
+    bullet4.setVelocity(25, 0);
+    bullet5.setVelocity(-25, 0);
+    bullet6.setVelocity(0, 25);
+    bullet7.setVelocity(0, -25);
+  }
+      
+
+    
        
   

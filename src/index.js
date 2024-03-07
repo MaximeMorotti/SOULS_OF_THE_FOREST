@@ -1,5 +1,5 @@
 import Ancient_Forest from "/src/Ancient_Forest.js"; 
-import niveau1 from "/src/niveau1.js";
+import Swamp from "/src/Swamp.js";
 import Rocky_Mountain from "/src/Rocky_Mountain.js"; 
 
 
@@ -17,7 +17,7 @@ var config = {
       debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
-  scene: [Ancient_Forest, niveau1,Rocky_Mountain] 
+  scene: [Ancient_Forest,  Swamp, Rocky_Mountain] 
   };
 
 // création et lancement du jeu à partir de la configuration config
