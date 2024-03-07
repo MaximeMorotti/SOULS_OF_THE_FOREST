@@ -15,6 +15,14 @@ var vitesseDeplacement = 1.5;
 var timer = true;
 var groupeBullets;
 var groupeBullets_P;
+var bullet1;
+var bullet2;
+var bullet3;
+var bullet4;
+var bullet5;
+var bullet6;
+var bullet7;
+var bullet8;
 // mise en place d'une variable boutonFeu
 var boutonFeu_0; 
 var boutonFeu_1; 
@@ -530,6 +538,7 @@ var monTimer = this.time.addEvent({
       // Vérifie si les points de vie de la chimère sont inférieurs ou égaux à zéro
       if (une_chimere.PV <= 0) {
           porte_ouvert = true;
+          console.log("porte ouvert");
       }
     });
 
@@ -751,7 +760,7 @@ var monTimer = this.time.addEvent({
       }
     }}, this);
 
-    if (Phaser.Input.Keyboard.JustDown(clavier.space) == true && porte_ouvert == true) {
+    if (Phaser.Input.Keyboard.JustDown(clavier.space) == true ) {
       if (this.physics.overlap(player, this.porte)) this.scene.start("Rocky_Mountain");
     } 
   }

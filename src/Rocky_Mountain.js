@@ -19,7 +19,7 @@ export default class Rocky_Mountain extends Phaser.Scene {
       this.load.image("Decorative_props", "assets/Mountain/Decorative_props.png");
       this.load.image("Mainlev_build", "assets/Mountain/Mainlev_build.png");
       this.load.tilemapTiledJSON("carte_M", "assets/Mountain/moutain_map.json"); 
-    
+      this.load.image("W_W", 'assets/weapon/cristal.png')
 
       this.load.spritesheet("creeper", "assets/Mountain/mobs/creeper.png", {
         frameWidth: 64,
@@ -224,7 +224,7 @@ export default class Rocky_Mountain extends Phaser.Scene {
                 Ogre.anims.play('anim_Ogre_stby', false);
                 Ogre.anims.play('anim_Ogre_P', true);
                 tirer_P(this.player, Ogre);
-            });
+              },this);
             var st1 = this.time.addEvent({
                 delay: 400, // ms
                 callback: function () {
@@ -242,7 +242,7 @@ export default class Rocky_Mountain extends Phaser.Scene {
                         Ogre.anims.play('anim_Ogre_stby', false);
                         Ogre.anims.play('anim_Ogre', true);
                         tirer_O(this.player, Ogre);
-                    });
+                      },this);
                     var st2 = this.time.addEvent({
                         delay: 400, // ms
                         callback: function () {
@@ -296,6 +296,15 @@ export default class Rocky_Mountain extends Phaser.Scene {
           ballesADetruire.push(bullet); // Ajoute la balle au tableau des balles à détruire
         } else if (bullet.texture.key === "bullet_2" && (bullet.x >= bullet.positionInitialeX + 100 || bullet.x <= bullet.positionInitialeX - 100)) {
           ballesADetruire.push(bullet); // Ajoute la balle au tableau des balles à détruire
+        }
+      });
+
+      groupeBullets.children.iterate(function(bullet) {
+        // Vérifie si la balle a dépassé la limite par rapport à sa position initiale et à son type
+        if (bullet.texture.key === "W_W") {
+            if (Phaser.Math.Distance.Between(The_Ogre.x, The_Ogre.y, bullet.x, bullet.y) >= 400) {
+                ballesADetruire.push(bullet); // Ajoute la balle au tableau des balles à détruire
+            }
         }
       });
   
