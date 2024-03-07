@@ -1,19 +1,17 @@
-le jeux n' a malheureusement pas pu être fini a temp 
-conseille pour essayer de voir le résultat:
-couper la musique au démarage ou le son de votre ordi car la musiquen' est plus coupable en jeux 
-A attaque 1
-E attaque 2 
-R attaque 3
+Le jeu n'a malheureusement pas pu être fini à temps. Conseil pour essayer de voir le résultat : couper la musique au démarrage ou le son de votre ordi car la musique n'est plus coupable en jeu. 
+A attaque 1.
+E attaque 2.
+R attaque 3.
 
 ESPACE pour changer de niveau quand vous êtes "sous" une porte.
 
-le niveau 1 "Ancient_Forest" vous ne pouvais pas prendre de dégat masi vous pouvais tuer les ennemie et vous balader dans la map 
+Le niveau 1 "Ancient_Forest" : vous ne pouvez pas prendre de dégât mais vous pouvez tuer les ennemis et vous balader dans la map.
 
-le niveau 2 "Swamp" vous craché si :
-vous tirer sur un mob ou vous rentré en contact avec les projectil et certain mob agresssif ( nous n' avons pas eu le temp de le relier au game over et la fonction de mort des mob c'est mit a buger en fin de compilation de niveau)
+Le niveau 2 "Swamp" vous échoue si :
+vous tirez sur un mob ou vous entrez en contact avec les projectiles et certains mobs agressifs (nous n'avons pas eu le temps de le relier au game over et la fonction de mort des mobs s'est mise à bugger en fin de compilation du niveau).
 
-le niveau 3 "Rocky_Mountain" n'est pas accesible. nous ne l' avons pas rendu accessible a cause d'un crash causé par les tire du bas qui n' a pas eu le temp d' être réglé après compilation des niveau.
+Le niveau 3 "Rocky_Mountain" n'est pas accessible. Nous ne l'avons pas rendu accessible à cause d'un crash causé par les tirs du bas qui n'a pas eu le temps d'être réglé après compilation des niveaux.
 
-nous avons aussi une page de début de jeux et de game over (cette dernière n'est pas relier au code mais peut fonctionner a merveille de son coté).
+Nous avons aussi une page de début de jeu et de game over (cette dernière n'est pas reliée au code mais peut fonctionner à merveille de son côté).
 
-encore une fois nous nous excuson de vous partager ce jeux non terminer nous avons eu les yeux plus gros que le ventre.
+Encore une fois, nous nous excusons de vous partager ce jeu non terminé. Nous avons eu les yeux plus gros que le ventre.
