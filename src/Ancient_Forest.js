@@ -1280,15 +1280,18 @@ function hit (bullet, cible) {
   }  
 
 }
+
 function hit_L (player,nouveauLoup) {
   if (groupe_Loup.contains(nouveauLoup)){
-    player.destroy();
+    this.scene.start("gameOver");
+    this.scene.stop("Ancient_Forest");
     nouveauLoup.destroy();
   }  
 }
 function hit_O (player,nouvelOrc) {
   if (groupe_Orc.contains(nouvelOrc)){
-    player.destroy();
+    this.scene.start("gameOver");
+    this.scene.stop("Ancient_Forest");
     nouvelOrc.destroy();
   }  
 }
