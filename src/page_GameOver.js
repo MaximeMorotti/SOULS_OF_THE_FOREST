@@ -40,7 +40,8 @@ export default class gameOver extends Phaser.Scene {
       //Cas ou la sourris clique sur le bouton play :
       // on lance le niveau 1
       bouton_restart.on("pointerup", () => {
-        this.scene.start("Page d'accueil");//Changer le nom de la scene avec celle d'Oscar
+        this.scene.start("Start");//Changer le nom de la scene avec celle d'Oscar
+        this.scene.stop("gameOver");
         musique_perdu2.stop();
       });
     }

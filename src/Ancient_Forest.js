@@ -438,7 +438,6 @@ export default class Ancient_Forest extends Phaser.Scene {
   var coefDirX;
   var coefDirY;
 
-
   var monTimer = this.time.addEvent({
     delay: 2300, // ms
     callback: function () {
@@ -761,7 +760,10 @@ var monTimer = this.time.addEvent({
     }}, this);
 
     if (Phaser.Input.Keyboard.JustDown(clavier.space) == true ) {
-      if (this.physics.overlap(player, this.porte)) this.scene.start("Swamp");
+      if (this.physics.overlap(player, this.porte)) {
+        this.scene.start("Swamp");
+        this.scene.stop("Ancient_Forest");
+      }
     } 
   }
 }
@@ -1241,11 +1243,11 @@ function hit (bullet, cible) {
   }  
   if (groupeBullets.contains(bullet)){
     console.log(" manger");
-    player.destroy();
+    game.scene.start("gameOver");
     bullet.destroy();
   }  
   if (groupeBullets.contains(bullet1)){
-    player.destroy();
+    game.scene.start("gameOver");
     bullet1.destroy();
   }  
   if (groupeBullets.contains(bullet2)){
@@ -1278,13 +1280,13 @@ function hit (bullet, cible) {
   }  
 
 }
-function hit_O (player,nouveauLoup) {
+function hit_L (player,nouveauLoup) {
   if (groupe_Loup.contains(nouveauLoup)){
     player.destroy();
     nouveauLoup.destroy();
   }  
 }
-function hit_L (player,nouvelOrc) {
+function hit_O (player,nouvelOrc) {
   if (groupe_Orc.contains(nouvelOrc)){
     player.destroy();
     nouvelOrc.destroy();

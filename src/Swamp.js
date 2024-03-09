@@ -99,7 +99,8 @@ export default class Swamp extends Phaser.Scene {
       this.player.setSize(12,30);
       this.player.setOffset(18,7);
       this.player.setCollideWorldBounds(true);
-      this.physics.add.overlap(groupeBullets, this.player, hit, null,this);
+      this.physics.add.collider(groupeBullets, this.player);
+      this.physics.add.overlap(groupeBullets, this.player, death, null,this);
 
       this.physics.add.collider(this.player, Background);
       this.physics.add.collider(this.player, deco2);
@@ -287,8 +288,6 @@ this.physics.add.collider(grp_behemoth, grp_glazer);
 this.physics.add.collider(grp_behemoth, grp_gnome);
 this.physics.add.collider(grp_behemoth, grp_meduse);
 this.physics.add.collider(grp_behemoth, grp_parasite);
-this.physics.add.collider(grp_behemoth, this.player);
-this.physics.add.collider(grp_behemoth, grp_behemoth);
 this.physics.add.collider(grp_behemoth, groupe_ennemis);
 
 this.physics.add.collider(grp_glazer, grp_glazer);
@@ -296,7 +295,6 @@ this.physics.add.collider(grp_glazer, grp_gnome);
 this.physics.add.collider(grp_glazer, grp_meduse);
 this.physics.add.collider(grp_glazer, grp_parasite);
 this.physics.add.collider(grp_glazer, this.player);
-this.physics.add.collider(grp_glazer, grp_behemoth);
 this.physics.add.collider(grp_glazer, groupe_ennemis);
 
 this.physics.add.collider(grp_meduse, grp_glazer);
@@ -304,7 +302,6 @@ this.physics.add.collider(grp_meduse, grp_gnome);
 this.physics.add.collider(grp_meduse, grp_meduse);
 this.physics.add.collider(grp_meduse, grp_parasite);
 this.physics.add.collider(grp_meduse, this.player);
-this.physics.add.collider(grp_meduse, grp_behemoth);
 this.physics.add.collider(grp_meduse, groupe_ennemis);
 
 this.physics.add.collider(grp_gnome, grp_glazer);
@@ -312,7 +309,6 @@ this.physics.add.collider(grp_gnome, grp_gnome);
 this.physics.add.collider(grp_gnome, grp_meduse);
 this.physics.add.collider(grp_gnome, grp_parasite);
 this.physics.add.collider(grp_gnome, this.player);
-this.physics.add.collider(grp_gnome, grp_behemoth);
 this.physics.add.collider(grp_gnome, groupe_ennemis);
 
 this.physics.add.collider(grp_parasite, grp_glazer);
@@ -320,14 +316,12 @@ this.physics.add.collider(grp_parasite, grp_gnome);
 this.physics.add.collider(grp_parasite, grp_meduse);
 this.physics.add.collider(grp_parasite, grp_parasite);
 this.physics.add.collider(grp_parasite, this.player);
-this.physics.add.collider(grp_parasite, grp_behemoth);
 this.physics.add.collider(grp_parasite, groupe_ennemis);
 
 this.physics.add.collider(this.player, grp_glazer);
 this.physics.add.collider(this.player, grp_gnome);
 this.physics.add.collider(this.player, grp_meduse);
 this.physics.add.collider(this.player, grp_parasite);
-this.physics.add.collider(this.player, grp_behemoth);
 this.physics.add.collider(this.player, groupe_ennemis);
 // Configuration de la caméra
 this.cameras.main.setBounds(0, 0, carteDuNiveau.widthInPixels, carteDuNiveau.heightInPixels);
@@ -369,8 +363,6 @@ tab_points.objects.forEach(point => {
     var porte=this.add.image(210, 2775, "img_porte");
     porte.setDepth(50);
 });
-
-this.physics.add.overlap(grp_parasite, this.player, hit, null, this);
 
  
 
@@ -1103,54 +1095,27 @@ function hit (bullet, cible) {
     } 
     bullet.destroy();
   }  
-  if (groupeBullets.contains(bullet)){
-    player.destroy();
-    bullet.destroy();
-  }  
-  if (groupeBullets.contains(bullet1)){
-    player.destroy();
-    bullet1.destroy();
-  }  
-  if (groupeBullets.contains(bullet2)){
-    player.destroy();
-    bullet2.destroy();
-  }  
-  if (groupeBullets.contains(bullet3)){
-    player.destroy();
-    bullet3.destroy();
-  }  
-  if (groupeBullets.contains(bullet4)){
-    player.destroy();
-    bullet4.destroy();
-  }  
-  if (groupeBullets.contains(bullet5)){
-    player.destroy();
-    bullet5.destroy();
-  }  
-  if (groupeBullets.contains(bullet6)){
-    player.destroy();
-    bullet6.destroy();
-  }  
-  if (groupeBullets.contains(bullet7)){
-    player.destroy();
-    bullet7.destroy();
-  }  
-  if (groupeBullets.contains(bullet8)){
-    player.destroy();
-    bullet8q.destroy();
-  }  
+}
 
+function death(player,bullet) {
+  for (let i = 1; i <= 8; i++) {
+    if (groupeBullets.contains(bullet[i])) {
+      this.game.scene.start("gameOver");
+      bullet[i].destroy();
+    }
+  } 
 }
 
 function hit_G (player,nouvel_gnome) {
   if (grp_gnome.contains(nouvel_gnome)){
-    player.destroy();
+    this.game.scene.stop("Swamp");
+    this.game.scene.start("gameOver");
     nouvel_gnome.destroy();
   }  
 }
 function hit_P (player,nouvel_parasite) {
   if (grp_parasite.contains(nouvel_parasite)){
-    player.destroy();
+    this.game.scene.start("gameOver");
     nouvel_parasite.destroy();
   }  
 }

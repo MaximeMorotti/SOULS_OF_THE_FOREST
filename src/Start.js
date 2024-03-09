@@ -78,6 +78,7 @@ export default class Start extends Phaser.Scene {
     bouton_play.on("pointerup", () => {
       bruit.play(); 
       this.game.scene.start("Ancient_Forest");
+      this.game.scene.stop("Start");
     });
   
       //Cas ou la sourris clique sur le bouton play :
