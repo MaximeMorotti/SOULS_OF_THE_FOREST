@@ -99,7 +99,6 @@ export default class Swamp extends Phaser.Scene {
       this.player.setSize(12,30);
       this.player.setOffset(18,7);
       this.player.setCollideWorldBounds(true);
-      this.physics.add.collider(groupeBullets, this.player);
       this.physics.add.overlap(groupeBullets, this.player, death, null,this);
 
       this.physics.add.collider(this.player, Background);
@@ -1100,7 +1099,7 @@ function hit (bullet, cible) {
 function death(player,bullet) {
   for (let i = 1; i <= 8; i++) {
     if (groupeBullets.contains(bullet[i])) {
-      this.game.scene.start("gameOver");
+      this.scene.start("gameOver");
       bullet[i].destroy();
     }
   } 
@@ -1108,14 +1107,15 @@ function death(player,bullet) {
 
 function hit_G (player,nouvel_gnome) {
   if (grp_gnome.contains(nouvel_gnome)){
-    this.game.scene.stop("Swamp");
-    this.game.scene.start("gameOver");
+    this.scene.start("gameOver");
+    this.scene.stop("Swamp");
     nouvel_gnome.destroy();
   }  
 }
 function hit_P (player,nouvel_parasite) {
   if (grp_parasite.contains(nouvel_parasite)){
-    this.game.scene.start("gameOver");
+    this.scene.start("gameOver");
+    this.scene.stop("Swamp");
     nouvel_parasite.destroy();
   }  
 }
